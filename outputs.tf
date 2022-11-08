@@ -22,3 +22,13 @@ output "region" {
   description = "Specifies the region in which to create the VPC."
   value       = try(sbercloud_vpc.this[0].region, "")
 }
+
+output "subnet_ids" {
+  description = "List of IDs of subnets"
+  value       = sbercloud_vpc_subnet.subnet[*].id
+}
+
+output "subnet_cidr_blocks" {
+  description = "List of cidrs of subnets"
+  value       = compact(sbercloud_vpc_subnet.subnet[*].cidr)
+}
