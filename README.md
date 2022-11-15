@@ -30,8 +30,8 @@ module "vpc" {
     ]
 
     dhcp_enable = true
-    primary_dns   = "8.8.8.8"
-    secondary_dns = "8.8.4.4"
+    primary_dns   = "100.125.13.59"
+    secondary_dns = "8.8.8.8"
 
     tags = {
     env = "test"
