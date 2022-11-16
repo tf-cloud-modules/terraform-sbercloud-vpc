@@ -48,8 +48,8 @@ resource "sbercloud_nat_gateway" "this" {
 
   region                = var.region
   name                  = "${sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].name}-natgw"
-  internal_network_id   = sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].id
-  router_id             = sbercloud_vpc.this[0].id
+  subnet_id             = sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].id
+  vpc_id                = sbercloud_vpc.this[0].id
   spec                  = lookup(each.value, "nat_gateway_spec")
   description           = lookup(each.value, "nat_gateway_description", null)
   enterprise_project_id = lookup(each.value, "nat_gateway_enterprise_project_id", null)
