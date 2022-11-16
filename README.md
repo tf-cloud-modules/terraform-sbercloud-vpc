@@ -20,8 +20,11 @@ module "vpc" {
     azs = ["ru-moscow-1a", "ru-moscow-1b"]
     subnets = [
     {
-        cidr       = "10.0.0.0/24"
-        gateway_ip = "10.0.0.1"
+        cidr                    = "10.0.0.0/24"
+        gateway_ip              = "10.0.0.1"
+        create_nat_gateway      = true
+        nat_gateway_description = "subnet one natgw"
+        nat_gateway_spec        = "1"
     },
     {
         cidr       = "10.0.1.0/24"
@@ -29,13 +32,21 @@ module "vpc" {
     }
     ]
 
-    dhcp_enable = true
+    dhcp_enable   = true
     primary_dns   = "100.125.13.59"
     secondary_dns = "8.8.8.8"
 
     tags = {
     env = "test"
     }
+
+    # default_route_table_routes = [
+    #   {
+    #     destination = "10.0.x.x/0"
+    #     type        = "xxx"
+    #     nexthop = "xxxxx-xxx-xxx"
+    #   },
+    # ]
 }
 ```
 <!-- BEGIN_TF_DOCS -->
@@ -60,7 +71,9 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [sbercloud_nat_gateway.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_gateway) | resource |
 | [sbercloud_vpc.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc) | resource |
+| [sbercloud_vpc_route.default_route](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route) | resource |
 | [sbercloud_vpc_subnet.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
 
 ## Inputs
@@ -70,6 +83,7 @@ No modules.
 | <a name="input_azs"></a> [azs](#input\_azs) | A list of availability zones names or ids in the region | `list(string)` | `[]` | no |
 | <a name="input_cidr"></a> [cidr](#input\_cidr) | Specifies the range of available subnets in the VPC. | `string` | n/a | yes |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Controls if VPC should be created. | `bool` | `true` | no |
+| <a name="input_default_route_table_routes"></a> [default\_route\_table\_routes](#input\_default\_route\_table\_routes) | Configuration block of routes. | `list(any)` | `[]` | no |
 | <a name="input_description"></a> [description](#input\_description) | Specifies supplementary information about the VPC. | `string` | `null` | no |
 | <a name="input_dhcp_enable"></a> [dhcp\_enable](#input\_dhcp\_enable) | Specifies whether the DHCP function is enabled for the subnet. | `bool` | `false` | no |
 | <a name="input_dns_list"></a> [dns\_list](#input\_dns\_list) | Specifies the DNS server address list of a subnet. | `list(string)` | `null` | no |

@@ -91,3 +91,9 @@ variable "dns_list" {
   type        = list(string)
   default     = null
 }
+
+variable "default_route_table_routes" {
+  description = "Configuration block of routes."
+  type        = list(any)
+  default     = []
+}
