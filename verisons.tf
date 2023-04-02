@@ -4,7 +4,7 @@ terraform {
   required_providers {
     sbercloud = {
       source  = "sbercloud-terraform/sbercloud"
-      version = ">= 1.9.0"
+      version = ">= 1.9.0, < 2.0.0"
     }
   }
 }
