@@ -4,6 +4,12 @@ variable "create_vpc" {
   default     = true
 }
 
+variable "vpc_id" {
+  type        = string
+  default     = null
+  description = "Existing VPC where resources will be created."
+}
+
 variable "region" {
   description = "Specifies the region in which to create the VPC."
   type        = string
@@ -52,7 +58,7 @@ variable "azs" {
 
 variable "subnets" {
   description = "A list of subnets inside the VPC"
-  type        = list(any)
+  type        = any
   default     = []
 }
 
