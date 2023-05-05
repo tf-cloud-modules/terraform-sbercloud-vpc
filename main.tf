@@ -58,3 +58,31 @@ resource "sbercloud_nat_gateway" "this" {
   description           = "For ${sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].name}"
   enterprise_project_id = lookup(each.value.nat_gw, "enterprise_project_id", null)
 }
+
+# nat gateway eip 
+resource "sbercloud_vpc_eip" "snat_eip" {
+  for_each = { for k, v in var.subnets : k => v
+    if lookup(v, "nat_gw", null) != null && lookup(v, "eip", null) != null && lookup(v, "existing_eip", null) == null
+  }
+
+  publicip {
+    type = lookup(each.value.eip, "type")
+  }
+  bandwidth {
+    share_type  = lookup(each.value.eip, "share_type")
+    name        = "${sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].name}-nat-gw-eip"
+    size        = lookup(each.value.eip, "size")
+    charge_mode = lookup(each.value.eip, "charge_mode")
+  }
+}
+
+# nat gateway snat
+resource "sbercloud_nat_snat_rule" "this" {
+  for_each = { for k, v in var.subnets : k => v
+    if lookup(v, "nat_gw", null) != null && lookup(v, "eip", null) != null || lookup(v, "existing_eip", null) != null
+  }
+
+  nat_gateway_id = sbercloud_nat_gateway.this[index(var.subnets, each.value)].id
+  network_id     = sbercloud_vpc_subnet.subnet[index(var.subnets, each.value)].id
+  floating_ip_id = lookup(each.value, "existing_eip", sbercloud_vpc_eip.snat_eip[index(var.subnets, each.value)].id)
+}

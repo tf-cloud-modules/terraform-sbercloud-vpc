@@ -55,7 +55,7 @@ module "vpc" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_sbercloud"></a> [sbercloud](#requirement\_sbercloud) | >= 1.9.0 |
+| <a name="requirement_sbercloud"></a> [sbercloud](#requirement\_sbercloud) | >= 1.9.0, < 2.0.0 |
 
 ## Providers
 
@@ -72,7 +72,9 @@ No modules.
 | Name | Type |
 |------|------|
 | [sbercloud_nat_gateway.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_gateway) | resource |
+| [sbercloud_nat_snat_rule.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_snat_rule) | resource |
 | [sbercloud_vpc.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc) | resource |
+| [sbercloud_vpc_eip.snat_eip](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_eip) | resource |
 | [sbercloud_vpc_route.default_route](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route) | resource |
 | [sbercloud_vpc_subnet.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
 
@@ -94,8 +96,9 @@ No modules.
 | <a name="input_secondary_dns"></a> [secondary\_dns](#input\_secondary\_dns) | Specifies the IP address of DNS server 2 on the subnet. | `string` | `null` | no |
 | <a name="input_subnet_names"></a> [subnet\_names](#input\_subnet\_names) | Explicit values to use in the name values on subnets. If empty, name values are generated. | `list(string)` | `[]` | no |
 | <a name="input_subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | List of subnet tags. | `map(string)` | `{}` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets inside the VPC | `list(any)` | `[]` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets inside the VPC | `any` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | List of common tags. | `map(string)` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Existing VPC where resources will be created. | `string` | `null` | no |
 | <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_tags) | List of VPC tags. | `map(string)` | `{}` | no |
 
 ## Outputs
