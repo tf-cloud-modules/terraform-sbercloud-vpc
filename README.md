@@ -1,6 +1,21 @@
 # terraform-sbercloud-vpc
 Sbercloud VPC Terraform module
 
+## Features
+
+- Create vpc, subnets, nat gateways, routes for subnet route tables
+- Easy to use in other resources via outputs
+
+## How to Configure Terraform for Sbercloud
+
+- [Sbercloud Quickstart](https://cloud.ru/ru/docs/terraform/ug/topics/quickstart.html)
+- Add environment variables for terraform authentication in Sbercloud
+
+```
+export SBC_ACCESS_KEY="xxxx-xxx-xxx"
+export SBC_SECRET_KEY="xxxx-xxx-xxx"
+```
+
 ## Provider configuration
 ```hcl
 provider "sbercloud" {
@@ -20,16 +35,43 @@ module "vpc" {
     azs = ["ru-moscow-1a", "ru-moscow-1b"]
     subnets = [
     {
-        cidr                    = "10.0.0.0/24"
-        gateway_ip              = "10.0.0.1"
-        create_nat_gateway      = true
-        nat_gateway_description = "subnet one natgw"
-        nat_gateway_spec        = "1"
+        cidr       = "10.0.0.0/24"
+        gateway_ip = "10.0.0.1"
+
+        nat_gw = {
+        spec = "1"
+        }
+
+        eip = {
+        type        = "5_bgp"
+        share_type  = "PER"
+        size        = 1
+        charge_mode = "traffic"
+        }
+
+        # vip_routes = [
+        #   {
+        #     destination = "192.168.100.0/24"
+        #     nexthop     = "10.0.0.117"
+        #     description = "test"
+        #   }
+        # ]
+
+        ecs_routes     = []
+        eni_routes     = []
+        nat_routes     = []
+        peering_routes = []
+        vpn_routes     = []
+        dc_routes      = []
+        cc_routes      = []
+
+        # existing_eip = "xxxx-xxx-xxx" # excludes eip creation and use existing one, has precedence over eip creation
+
     },
     {
         cidr       = "10.0.1.0/24"
         gateway_ip = "10.0.1.1"
-    }
+    },
     ]
 
     dhcp_enable   = true
@@ -44,7 +86,7 @@ module "vpc" {
     #   {
     #     destination = "10.0.x.x/0"
     #     type        = "xxx"
-    #     nexthop = "xxxxx-xxx-xxx"
+    #     nexthop     = "xxxxx-xxx-xxx"
     #   },
     # ]
 }
@@ -74,9 +116,10 @@ No modules.
 | [sbercloud_nat_gateway.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_gateway) | resource |
 | [sbercloud_nat_snat_rule.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_snat_rule) | resource |
 | [sbercloud_vpc.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc) | resource |
-| [sbercloud_vpc_eip.snat_eip](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_eip) | resource |
+| [sbercloud_vpc_eip.snat](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_eip) | resource |
 | [sbercloud_vpc_route.default_route](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route) | resource |
-| [sbercloud_vpc_subnet.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
+| [sbercloud_vpc_route_table.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route_table) | resource |
+| [sbercloud_vpc_subnet.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
 
 ## Inputs
 
