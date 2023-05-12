@@ -1,6 +1,21 @@
 # terraform-sbercloud-vpc
 Sbercloud VPC Terraform module
 
+## Features
+
+- Create vpc, subnets, nat gateways, routes for subnet route tables
+- Easy to use in other resources via outputs
+
+## How to Configure Terraform for Sbercloud
+
+- [Sbercloud Quickstart](https://cloud.ru/ru/docs/terraform/ug/topics/quickstart.html)
+- Add environment variables for terraform authentication in Sbercloud
+
+```
+export SBC_ACCESS_KEY="xxxx-xxx-xxx"
+export SBC_SECRET_KEY="xxxx-xxx-xxx"
+```
+
 ## Provider configuration
 ```hcl
 provider "sbercloud" {
@@ -20,16 +35,43 @@ module "vpc" {
     azs = ["ru-moscow-1a", "ru-moscow-1b"]
     subnets = [
     {
-        cidr                    = "10.0.0.0/24"
-        gateway_ip              = "10.0.0.1"
-        create_nat_gateway      = true
-        nat_gateway_description = "subnet one natgw"
-        nat_gateway_spec        = "1"
+        cidr       = "10.0.0.0/24"
+        gateway_ip = "10.0.0.1"
+
+        nat_gw = {
+        spec = "1"
+        }
+
+        eip = {
+        type        = "5_bgp"
+        share_type  = "PER"
+        size        = 1
+        charge_mode = "traffic"
+        }
+
+        # vip_routes = [
+        #   {
+        #     destination = "192.168.100.0/24"
+        #     nexthop     = "10.0.0.117"
+        #     description = "test"
+        #   }
+        # ]
+
+        ecs_routes     = []
+        eni_routes     = []
+        nat_routes     = []
+        peering_routes = []
+        vpn_routes     = []
+        dc_routes      = []
+        cc_routes      = []
+
+        # existing_eip = "xxxx-xxx-xxx" # excludes eip creation and use existing one, has precedence over eip creation
+
     },
     {
         cidr       = "10.0.1.0/24"
         gateway_ip = "10.0.1.1"
-    }
+    },
     ]
 
     dhcp_enable   = true
@@ -44,7 +86,7 @@ module "vpc" {
     #   {
     #     destination = "10.0.x.x/0"
     #     type        = "xxx"
-    #     nexthop = "xxxxx-xxx-xxx"
+    #     nexthop     = "xxxxx-xxx-xxx"
     #   },
     # ]
 }
@@ -55,7 +97,7 @@ module "vpc" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_sbercloud"></a> [sbercloud](#requirement\_sbercloud) | >= 1.9.0 |
+| <a name="requirement_sbercloud"></a> [sbercloud](#requirement\_sbercloud) | >= 1.9.0, < 2.0.0 |
 
 ## Providers
 
@@ -72,9 +114,12 @@ No modules.
 | Name | Type |
 |------|------|
 | [sbercloud_nat_gateway.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_gateway) | resource |
+| [sbercloud_nat_snat_rule.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/nat_snat_rule) | resource |
 | [sbercloud_vpc.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc) | resource |
+| [sbercloud_vpc_eip.snat](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_eip) | resource |
 | [sbercloud_vpc_route.default_route](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route) | resource |
-| [sbercloud_vpc_subnet.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
+| [sbercloud_vpc_route_table.subnet](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_route_table) | resource |
+| [sbercloud_vpc_subnet.this](https://registry.terraform.io/providers/sbercloud-terraform/sbercloud/latest/docs/resources/vpc_subnet) | resource |
 
 ## Inputs
 
@@ -94,8 +139,9 @@ No modules.
 | <a name="input_secondary_dns"></a> [secondary\_dns](#input\_secondary\_dns) | Specifies the IP address of DNS server 2 on the subnet. | `string` | `null` | no |
 | <a name="input_subnet_names"></a> [subnet\_names](#input\_subnet\_names) | Explicit values to use in the name values on subnets. If empty, name values are generated. | `list(string)` | `[]` | no |
 | <a name="input_subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | List of subnet tags. | `map(string)` | `{}` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets inside the VPC | `list(any)` | `[]` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets inside the VPC | `any` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | List of common tags. | `map(string)` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Existing VPC where resources will be created. | `string` | `null` | no |
 | <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_tags) | List of VPC tags. | `map(string)` | `{}` | no |
 
 ## Outputs
