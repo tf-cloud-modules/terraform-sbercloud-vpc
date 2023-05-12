@@ -25,10 +25,10 @@ output "region" {
 
 output "subnet_ids" {
   description = "List of IDs of subnets"
-  value       = sbercloud_vpc_subnet.subnet[*].id
+  value       = sbercloud_vpc_subnet.this[*].id
 }
 
 output "subnet_cidr_blocks" {
   description = "List of cidrs of subnets"
-  value       = compact(sbercloud_vpc_subnet.subnet[*].cidr)
+  value       = compact(sbercloud_vpc_subnet.this[*].cidr)
 }
